@@ -15,8 +15,15 @@ class sub_realtime(QA_Thread):
             durable=False,
             vhost='/',
             routing_key='*')
-        pymongo.MongoClient(mongo_ip).qa.drop_collection('REALTIMEPRO_FIX')
+        #pymongo.MongoClient(mongo_ip).qa.drop_collection('REALTIMEPRO_FIX')
         self.db = pymongo.MongoClient(mongo_ip).qa.REALTIMEPRO_FIX
+        '''
+        import pandas as pd
+        stock_pool_pd = pd.read_csv("/root/sim/stock_strategy/stock_pool.csv", encoding='utf-8',
+                                    converters={'code': str});
+        self.stock_pool_list = stock_pool_pd['code'].tolist()
+        '''
+
 
         self.db.create_index(
             [
@@ -40,7 +47,13 @@ class sub_realtime(QA_Thread):
         """
         res = json.loads(data, encoding='utf-8')
         print(res)
-        self.on_fixdata(res)
+        new_res = []
+        for item in res:
+            if (item.get('frequence') != '1min'):
+                new_res.append(item)
+        if (new_res) :
+            self.on_fixdata(new_res)
+        return
 
     def on_fixdata(self, data):
         self.db.insert_many(data)

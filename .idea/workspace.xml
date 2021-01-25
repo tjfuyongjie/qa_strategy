@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="66e0949d-f059-44b8-b4da-19f624dab969" name="Default Changelist" comment="" />
+    <list default="true" id="66e0949d-f059-44b8-b4da-19f624dab969" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/backtest.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/backtest.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/未命名1.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/未命名1.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sub_QAREALTIME_FIX.py" beforeDir="false" afterPath="$PROJECT_DIR$/sub_QAREALTIME_FIX.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/未命名.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/未命名.ipynb" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,7 +21,11 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1n3f0k7OxTlIXDPMOoLcANbqghN" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -22,6 +33,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RecentsManager">
@@ -74,12 +86,12 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="441" y="251" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1611139832068">
-      <screen x="0" y="23" width="1440" height="835" />
+    <state x="441" y="251" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1611401680146">
+      <screen x="0" y="23" width="1440" height="836" />
     </state>
     <state x="441" y="250" key="#com.intellij.fileTypes.FileTypeChooser/0.23.1440.834@0.23.1440.834" timestamp="1610637942358" />
     <state x="441" y="251" key="#com.intellij.fileTypes.FileTypeChooser/0.23.1440.835@0.23.1440.835" timestamp="1611139832068" />
-    <state x="441" y="251" key="#com.intellij.fileTypes.FileTypeChooser/0.23.1440.836@0.23.1440.836" timestamp="1610774799123" />
+    <state x="441" y="251" key="#com.intellij.fileTypes.FileTypeChooser/0.23.1440.836@0.23.1440.836" timestamp="1611401680146" />
     <state width="1419" height="200" key="GridCell.Tab.0.bottom" timestamp="1610776155759">
       <screen x="0" y="23" width="1440" height="836" />
     </state>
@@ -112,10 +124,11 @@
       <screen x="0" y="23" width="1440" height="836" />
     </state>
     <state width="1419" height="249" key="GridCell.Tab.1.right/0.23.1440.836@0.23.1440.836" timestamp="1610776126881" />
-    <state x="378" y="178" width="683" height="487" key="find.popup" timestamp="1611294636267">
-      <screen x="0" y="23" width="1440" height="836" />
+    <state x="378" y="178" width="683" height="488" key="find.popup" timestamp="1611545110316">
+      <screen x="0" y="23" width="1440" height="837" />
     </state>
     <state x="378" y="178" width="683" height="486" key="find.popup/0.23.1440.835@0.23.1440.835" timestamp="1611196929143" />
     <state x="378" y="178" width="683" height="487" key="find.popup/0.23.1440.836@0.23.1440.836" timestamp="1611294636267" />
+    <state x="378" y="178" width="683" height="488" key="find.popup/0.23.1440.837@0.23.1440.837" timestamp="1611545110316" />
   </component>
 </project>
