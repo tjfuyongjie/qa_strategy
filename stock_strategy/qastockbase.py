@@ -29,6 +29,7 @@ from QUANTAXIS.QAUtil import (
     QA_util_time_stamp
 )
 
+from QUANTAXIS.QAData import (QA_DataStruct_Stock_min)
 
 class QAStrategyStockBase(QAStrategyCTABase):
 
@@ -114,6 +115,7 @@ class QAStrategyStockBase(QAStrategyCTABase):
             new_list.append(self.format_stock_data(item))
 
         res = pd.DataFrame([item for item in new_list])
+        res['datetime'] = pd.to_datetime(res['datetime'])
         res = res.query('volume>1').drop_duplicates(['datetime',
                                              'code']).set_index(['datetime', 'code']
                                                       ).loc[:, ['open', 'high', 'low', 'close', 'volume']]
@@ -127,8 +129,8 @@ class QAStrategyStockBase(QAStrategyCTABase):
         Arguments:
             new_bar {json} -- [description]
         """
-        print('old data....', self._old_data)
-        self._market_data = pd.concat([self._old_data, new_bar])
+        #print('old data....', self._old_data)
+        self._market_data = pd.concat([self._old_data.tail(200), new_bar])
         # QA.QA_util_log_info(self._market_data)
 
         if self.isupdate:
@@ -137,6 +139,8 @@ class QAStrategyStockBase(QAStrategyCTABase):
 
         self.update_account()
         # self.positions.on_price_change(float(new_bar['close']))
+
+        #print('new_bar...',new_bar)
         self.on_bar(new_bar)
 
     def ind2str(self, ind, ind_type):
@@ -157,38 +161,35 @@ class QAStrategyStockBase(QAStrategyCTABase):
             c {[type]} -- [description]
             body {[type]} -- [description]
         """
-
+        #print(body)
         new_data = json.loads(str(body, encoding='utf-8'))
+        self.newbar(new_data)
 
-        
-        #new_data = [{'datetime': '2021-01-25 10:10:09', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338', 'open': 5.24,'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min', 'pctchange': 0.0}]
-        
+    def newbar(self, new_data):
 
-        #print('NEW DATA:', new_data)
-
-        #self.new_data =  self.format_stock_data(new_data)
-        new_dict = {}
         for item in new_data:
-            # print(item)
             new_dict = self.format_stock_data(item)
             self.new_data = new_dict
+            if (self.new_data['code'] not in self.stock_pool_list):
+                continue
+            self.running_time = self.new_data['datetime']
+            if self.dt != str(self.new_data['datetime'])[0:16]:
+                # [0:16]是分钟线位数
+                #print('update!!!!!!!!!!!! dt:', self.dt)
+                self.dt = str(self.new_data['datetime'])[0:16]
+                self.isupdate = True
 
-        if (not self.new_data ):
+
+        if (not self.new_data):
+            # print('new_data 不存在', new_data)
             return
 
-        #print(self.new_data)
         self.latest_price[self.new_data['code']] = self.new_data['close']
-
-        self.running_time = self.new_data['datetime']
-        if self.dt != str(self.new_data['datetime'])[0:16]:
-            # [0:16]是分钟线位数
-            print('update!!!!!!!!!!!! dt:',self.dt)
-            self.dt = str(self.new_data['datetime'])[0:16]
-            self.isupdate = True
-
+        #print('new_data:', self.new_data)
         self.acc.on_price_change(self.new_data['code'], self.new_data['close'])
-        bar = pd.DataFrame([self.new_data]).set_index(['datetime', 'code']
-                                                      ).loc[:, ['open', 'high', 'low', 'close', 'volume']]
+        bar = pd.DataFrame([self.new_data]).set_index(['datetime', 'code'])
+        #bar = QA_DataStruct_Stock_min(bar)
+        bar = bar.loc[:, ['open', 'high', 'low', 'close', 'volume']]
         #print('bar:.......',bar)
         self.upcoming_data(bar)
 
@@ -212,7 +213,7 @@ class QAStrategyStockBase(QAStrategyCTABase):
             d['date_stamp'] = QA_util_date_stamp(item.get('datetime'))
             d['time_stamp'] = QA_util_time_stamp(item.get('datetime'))
             d['date'] = item.get('datetime')[0:10]  # 2020-10-12
-            d['datetime'] = item.get('datetime')  # 2020-10-12 10:02:00
+            d['datetime'] = pd.to_datetime(item.get('datetime'))  # 2020-10-12 10:02:00
             d['tradetime'] = item.get('datetime')[0:16]  # 2020-10-12 10:02
 
         return d
@@ -250,8 +251,47 @@ class QAStrategyStockBase(QAStrategyCTABase):
         # threading.Thread(target=, daemon=True).start()
         # print(self.subscribe_data)
         # self.sub.start()
-        #self.callback(1,2,3,{'a':'b'})
-        self.subscriber.start()
+        self.debug_callback()
+        #self.subscriber.start()
+
+    def debug_callback(self):
+        new_data = [{'datetime': '2021-01-26 18:05:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338', 'open': 5.24,
+             'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min', 'pctchange': 0.0}]
+        self.newbar(new_data)
+
+        new_data = [{'datetime': '2021-01-26 18:10:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338', 'open': 5.24,
+             'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min', 'pctchange': 0.0}]
+        self.newbar(new_data)
+
+        new_data = [{'datetime': '2021-01-26 18:15:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338','open': 5.24,
+                    'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min', 'pctchange': 0.0}]
+        self.newbar(new_data)
+
+
+        # 另一个code
+        new_data = [{'datetime': '2021-01-26 18:05:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000545',
+                     'open': 5.24,
+                     'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min',
+                     'pctchange': 0.0}]
+        self.newbar(new_data)
+
+        new_data = [{'datetime': '2021-01-26 18:10:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000545',
+                     'open': 5.24,
+                     'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min',
+                     'pctchange': 0.0}]
+        self.newbar(new_data)
+
+        new_data = [{'datetime': '2021-01-26 18:15:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000545',
+                     'open': 5.24,
+                     'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min',
+                     'pctchange': 0.0}]
+        self.newbar(new_data)
+
+        new_data = [{'datetime': '2021-01-26 18:20:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338',
+                     'open': 5.24,
+                     'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min',
+                     'pctchange': 0.0}]
+        self.newbar(new_data)
 
     def run(self):
         while True:
@@ -265,10 +305,10 @@ class QAStrategyStockBase(QAStrategyCTABase):
         self.acc = port.new_accountpro(
             account_cookie=self.strategy_id, init_cash=self.init_cash, market_type=self.market_type)
         # self.positions = self.acc.get_position(self.code)
-
+        print('data')
         data = QA.QA_quotation(self.code, self.start, self.end, source=QA.DATASOURCE.MONGO,
                                frequence=self.frequence, market=self.market_type, output=QA.OUTPUT_FORMAT.DATASTRUCT)
-        # print(data.data)
+        print(data.data)
         data.data.apply(self.x1, axis=1)
 
     def update_account(self):

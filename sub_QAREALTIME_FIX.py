@@ -46,12 +46,13 @@ class sub_realtime(QA_Thread):
             data {[type]} -- [description]
         """
         res = json.loads(data, encoding='utf-8')
-        print(res)
+
         new_res = []
         for item in res:
             if (item.get('frequence') != '1min'):
                 new_res.append(item)
         if (new_res) :
+            print(res)
             self.on_fixdata(new_res)
         return
 

@@ -92,6 +92,7 @@ class DMI(QAStrategyStockBase):
         #当前stock code
         code = bar.name[1]
         newbar = self.get_code_marketdata(code)
+        print('newbar.......', newbar)
         rst30minDict = self.on_30min_bar(code,newbar)
         rst15minDict = self.on_15min_bar(code,newbar)
         rst5minDict = self.on_5min_bar(code,newbar)
@@ -265,8 +266,8 @@ if __name__ == '__main__':
     stock_pool_pd = pd.read_csv("/root/sim/stock_strategy/stock_pool.csv",encoding='utf-8',converters = {'code':str});
     stock_pool_list = stock_pool_pd['code'].tolist()
     
-    #DMI = DMI(code=stock_pool_list, frequence='5min',strategy_id='x', start=start, end=end)
-    #DMI.run_backtest()
-    DMI = DMI(code=stock_pool_list, frequence='5min',strategy_id='stock_sim', send_wx=True)
-    DMI.debug_sim()
-    DMI.add_subscriber(qaproid="oL-C4w2cSApfgeB6Uy9028RomZp4")
+    DMI = DMI(code=stock_pool_list, frequence='5min',strategy_id='x', start=start, end=end)
+    DMI.run_backtest()
+    #DMI = DMI(code=stock_pool_list, frequence='5min',strategy_id='stock_sim', send_wx=True)
+    #DMI.debug_sim()
+    #DMI.add_subscriber(qaproid="oL-C4w2cSApfgeB6Uy9028RomZp4")
