@@ -100,7 +100,7 @@ class DMI(QAStrategyStockBase):
             code = bar._stat_axis.values[0][1]
 
         newbar = self.get_code_marketdata(code)
-        print('newbar.......', code, newbar.tail(48))
+        print('newbar.......', code, newbar.tail(20))
         # print(newbar.index)
         rst30minDict = self.on_30min_bar(code, newbar)
         rst15minDict = self.on_15min_bar(code, newbar)
@@ -152,10 +152,12 @@ class DMI(QAStrategyStockBase):
             print('wr异常', allData)"""
         # wrDay = dayData.add_func(QA.QA_indicator_WR,10,6)
         # print('-------')
-        print(wrDay.tail(20))
+        #print(wrDay.tail(20))
         # print('uuuuuuu')
         # if (wrDay.WR1[-2:])
         # print(wrDay['WR1'].values[-1])
+        wr2 = wrDay['WR2'].values
+        wr1 = wrDay['WR1'].values
         if (len(wrDay['WR2'].values) < 2):
             return 0
         if (wrDay['WR2'].values[-1] >= 10 and wrDay['WR2'].values[-2] < 10 \
@@ -164,6 +166,14 @@ class DMI(QAStrategyStockBase):
             return 1
         elif (wrDay['WR2'].values[-1] <= 88 and wrDay['WR2'].values[-2] > 90 \
               and self.almostEquel(wrDay['WR1'].values[-2], wrDay['WR2'].values[-2]) \
+                ):
+            return -1
+        elif (self.yetEquel(wr1[-1],wr2[-1]) and  self.yetEquel(wr1[-2],wr2[-2])  \
+                and  wr2[-2]<15 and wr2[-1]>15 \
+                ):
+            return 1
+        elif (self.yetEquel(wr1[-1],wr2[-1]) and  self.yetEquel(wr1[-2],wr2[-2])  \
+                and wr2[-2]>85 and wr2[-1]<85 \
                 ):
             return -1
         else:
@@ -213,7 +223,9 @@ class DMI(QAStrategyStockBase):
     def almostEquel(self, d1, d2):
         if (d1 - d2 < 4):
             return 1
-
+    def yetEquel(self, d1, d2):
+        if (d1 - d2 < 0.01 or d1 - d2 > 0.01):
+            return 1
     def dmi(self):
         return QA.QA_indicator_DMI(self.market_data, 14, 6)
 
@@ -282,14 +294,14 @@ class DMI(QAStrategyStockBase):
 if __name__ == '__main__':
     # QA.QA_util_get_last_day(QA.QA_util_get_real_date(str(datetime.date.today())),), str(datetime.datetime.now()),
     print(datetime.datetime.now())
-    start = QA.QA_util_get_last_day(QA.QA_util_get_real_date(str(datetime.date.today())), 5)
+    start = QA.QA_util_get_last_day(QA.QA_util_get_real_date(str(datetime.date.today())), 10)
     end = str(datetime.datetime.now())
 
     stock_pool_pd = pd.read_csv("/root/sim/stock_strategy/stock_pool.csv", encoding='utf-8', converters={'code': str});
     stock_pool_list = stock_pool_pd['code'].tolist()
-    # stock_pool_list=['000338','000545']
-    # DMI = DMI(code=stock_pool_list, frequence='5min',strategy_id='x', start=start, end=end)
-    # DMI.run_backtest()
+    #stock_pool_list=['000338','000545']
+    #DMI = DMI(code=stock_pool_list, frequence='5min',strategy_id='x', start=start, end=end)
+    #DMI.run_backtest()
     DMI = DMI(code=stock_pool_list, frequence='5min', strategy_id='stock_sim', send_wx=True)
     DMI.debug_sim()
     DMI.add_subscriber(qaproid="oL-C4w2cSApfgeB6Uy9028RomZp4")

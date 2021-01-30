@@ -3,17 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="66e0949d-f059-44b8-b4da-19f624dab969" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/backtest-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/backtest-checkpoint.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/sim_strategy-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/sim_strategy-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/strategy-checkpoint.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/strategy-checkpoint.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stock_strategy/backtest.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/backtest.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stock_strategy/qastockbase.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/qastockbase.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stock_strategy/sim_strategy.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/sim_strategy.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stock_strategy/strategy.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/strategy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stock_strategy/未命名1.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/未命名1.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/未命名2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/未命名2.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sub_QAREALTIME_FIX.py" beforeDir="false" afterPath="$PROJECT_DIR$/sub_QAREALTIME_FIX.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/实时行情读取 (2)(1).ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/实时行情读取 (2)(1).ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/启动命令.py" beforeDir="false" afterPath="$PROJECT_DIR$/启动命令.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,11 +126,16 @@
       <screen x="0" y="23" width="1440" height="836" />
     </state>
     <state width="1419" height="249" key="GridCell.Tab.1.right/0.23.1440.836@0.23.1440.836" timestamp="1610776126881" />
-    <state x="378" y="178" width="683" height="488" key="find.popup" timestamp="1611545110316">
+    <state x="397" y="270" key="com.intellij.ide.util.TipDialog" timestamp="1611813543143">
+      <screen x="0" y="23" width="1440" height="830" />
+    </state>
+    <state x="397" y="270" key="com.intellij.ide.util.TipDialog/0.23.1440.830/-2560.23.2560.1417@0.23.1440.830" timestamp="1611813543143" />
+    <state x="378" y="178" width="683" height="488" key="find.popup" timestamp="1611800935601">
       <screen x="0" y="23" width="1440" height="837" />
     </state>
     <state x="378" y="178" width="683" height="486" key="find.popup/0.23.1440.835@0.23.1440.835" timestamp="1611196929143" />
     <state x="378" y="178" width="683" height="487" key="find.popup/0.23.1440.836@0.23.1440.836" timestamp="1611294636267" />
-    <state x="378" y="178" width="683" height="488" key="find.popup/0.23.1440.837@0.23.1440.837" timestamp="1611545110316" />
+    <state x="378" y="178" width="683" height="488" key="find.popup/0.23.1440.837@0.23.1440.837" timestamp="1611800935601" />
+    <state x="378" y="178" width="683" height="489" key="find.popup/0.23.1440.838@0.23.1440.838" timestamp="1611715949430" />
   </component>
 </project>

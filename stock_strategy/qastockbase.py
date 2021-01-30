@@ -52,6 +52,7 @@ class QAStrategyStockBase(QAStrategyCTABase):
 
         self.code = code
         self.send_wx = send_wx
+        self.dtcode={}
         import pandas as pd
         stock_pool_pd = pd.read_csv("/root/sim/stock_strategy/stock_pool.csv", encoding='utf-8',
                                     converters={'code': str});
@@ -115,7 +116,8 @@ class QAStrategyStockBase(QAStrategyCTABase):
             new_list.append(self.format_stock_data(item))
 
         res = pd.DataFrame([item for item in new_list])
-        res['datetime'] = pd.to_datetime(res['datetime'])
+        #res['datetime'] = pd.to_datetime(res['datetime'])
+        print(res)
         res = res.query('volume>1').drop_duplicates(['datetime',
                                              'code']).set_index(['datetime', 'code']
                                                       ).loc[:, ['open', 'high', 'low', 'close', 'volume']]
@@ -129,7 +131,7 @@ class QAStrategyStockBase(QAStrategyCTABase):
         Arguments:
             new_bar {json} -- [description]
         """
-        #print('old data....', self._old_data)
+
         self._market_data = pd.concat([self._old_data.tail(200), new_bar])
         # QA.QA_util_log_info(self._market_data)
 
@@ -162,45 +164,49 @@ class QAStrategyStockBase(QAStrategyCTABase):
             body {[type]} -- [description]
         """
         #print(body)
+
         new_data = json.loads(str(body, encoding='utf-8'))
         self.newbar(new_data)
 
     def newbar(self, new_data):
 
         for item in new_data:
+
             new_dict = self.format_stock_data(item)
             self.new_data = new_dict
-            if (self.new_data['code'] not in self.stock_pool_list):
+            # 只接受5min
+            if (not self.new_data or self.new_data['type'] != '5min'):
+                # print('new_data 不存在', new_data)
                 continue
+
+
+
             self.running_time = self.new_data['datetime']
-            if self.dt != str(self.new_data['datetime'])[0:16]:
+            code = self.new_data['code']
+            if code not in self.dtcode or self.dtcode[code] != str(self.new_data['datetime'])[0:16]:
                 # [0:16]是分钟线位数
-                #print('update!!!!!!!!!!!! dt:', self.dt)
-                self.dt = str(self.new_data['datetime'])[0:16]
+                print('update!!!!!!!!!!!! dt:')
+                self.dtcode[code] = str(self.new_data['datetime'])[0:16]
                 self.isupdate = True
 
+        
 
-        if (not self.new_data):
-            # print('new_data 不存在', new_data)
-            return
 
-        self.latest_price[self.new_data['code']] = self.new_data['close']
-        #print('new_data:', self.new_data)
-        self.acc.on_price_change(self.new_data['code'], self.new_data['close'])
-        bar = pd.DataFrame([self.new_data]).set_index(['datetime', 'code'])
-        #bar = QA_DataStruct_Stock_min(bar)
-        bar = bar.loc[:, ['open', 'high', 'low', 'close', 'volume']]
-        #print('bar:.......',bar)
-        self.upcoming_data(bar)
+            self.latest_price[self.new_data['code']] = self.new_data['close']
+            self.acc.on_price_change(self.new_data['code'], self.new_data['close'])
+            bar = pd.DataFrame([self.new_data]).set_index(['datetime', 'code'])
+            #bar = QA_DataStruct_Stock_min(bar)
+            bar = bar.loc[:, ['open', 'high', 'low', 'close', 'volume']]
+            #print('bar:.......',bar)
+            self.upcoming_data(bar)
 
     def format_stock_data(self, item):
         code = item.get('code')
         new_code = code[-6:]
+
         d = {}
-        # print(new_code)
-        # print(item)
         #and item.get('frequence') == '1min'
-        if new_code in self.stock_pool_list :
+        if new_code in self.stock_pool_list:
             d['code'] = new_code
             d['open'] = item.get('open')
             d['high'] = item.get('high')
@@ -251,47 +257,58 @@ class QAStrategyStockBase(QAStrategyCTABase):
         # threading.Thread(target=, daemon=True).start()
         # print(self.subscribe_data)
         # self.sub.start()
-        self.debug_callback()
-        #self.subscriber.start()
+        #self.debug_callback()
+        self.subscriber.start()
 
     def debug_callback(self):
-        new_data = [{'datetime': '2021-01-26 18:05:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338', 'open': 5.24,
+        new_data = [{'datetime': '2021-01-27 18:05:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338', 'open': 5.24,
              'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min', 'pctchange': 0.0}]
         self.newbar(new_data)
-
-        new_data = [{'datetime': '2021-01-26 18:10:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338', 'open': 5.24,
-             'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min', 'pctchange': 0.0}]
-        self.newbar(new_data)
-
-        new_data = [{'datetime': '2021-01-26 18:15:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338','open': 5.24,
-                    'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min', 'pctchange': 0.0}]
-        self.newbar(new_data)
-
 
         # 另一个code
-        new_data = [{'datetime': '2021-01-26 18:05:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000545',
+        new_data = [{'datetime': '2021-01-27 18:05:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000545',
                      'open': 5.24,
                      'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min',
                      'pctchange': 0.0}]
         self.newbar(new_data)
 
-        new_data = [{'datetime': '2021-01-26 18:10:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000545',
+        new_data = [{'datetime': '2021-01-27 18:10:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338', 'open': 5.24,
+             'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min', 'pctchange': 0.0}]
+        self.newbar(new_data)
+
+        new_data = [{'datetime': '2021-01-27 18:10:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000545',
                      'open': 5.24,
                      'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min',
                      'pctchange': 0.0}]
         self.newbar(new_data)
 
-        new_data = [{'datetime': '2021-01-26 18:15:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000545',
+        new_data = [
+            {'datetime': '2021-01-27 18:15:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338', 'open': 5.24,
+             'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min', 'pctchange': 0.0}]
+        self.newbar(new_data)
+        new_data = [{'datetime': '2021-01-27 18:15:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000545',
                      'open': 5.24,
                      'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min',
                      'pctchange': 0.0}]
         self.newbar(new_data)
 
-        new_data = [{'datetime': '2021-01-26 18:20:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338',
+        '''
+        new_data = [{'datetime': '2021-01-27 18:15:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338','open': 5.24,
+                    'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min', 'pctchange': 0.0}]
+        self.newbar(new_data)
+        new_data = [{'datetime': '2021-01-27 18:15:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000545',
                      'open': 5.24,
                      'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min',
                      'pctchange': 0.0}]
         self.newbar(new_data)
+
+        new_data = [{'datetime': '2021-01-27 18:20:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338',
+                     'open': 5.24,
+                     'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min',
+                     'pctchange': 0.0}]
+        self.newbar(new_data)
+        '''
+
 
     def run(self):
         while True:
