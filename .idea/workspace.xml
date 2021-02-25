@@ -3,12 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="66e0949d-f059-44b8-b4da-19f624dab969" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/sim_strategy-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/sim_strategy-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/backtest.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/backtest.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/未命名3-checkpoint.ipynb" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/stock_strategy/qastockbase.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/qastockbase.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/sim_strategy.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/sim_strategy.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/strategy.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/strategy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/stock_pool.csv" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/stock_pool.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/strategy.log" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/strategy.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stock_strategy/未命名1.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/未命名1.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/未命名3.ipynb" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/启动命令.py" beforeDir="false" afterPath="$PROJECT_DIR$/启动命令.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

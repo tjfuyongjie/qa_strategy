@@ -19,6 +19,16 @@ PATH=/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 tz=asia/shanghai
 30 17 * * 1-5 python /root/QUANTAXIS/config/update_all.py
 
+更新 stock_block_list 报错的，环境或者docker中 运行 pip install xlrd -i https://pypi.doubanio.com/simple
 
 30 09 * * * /opt/conda/bin/python /root/sim/stock_strategy/strategy.py > /root/sim/stock_strategy/strategy.log
 29 09 * * * /opt/conda/bin/python /root/sim/sub_QAREALTIME_FIX.py
+
+
+pip install QUANTAXIS -U
+pip install QIFIAccount -U
+
+pip install quantaxis_pubsub –U
+
+-------
+http://127.0.0.1:8029/testk

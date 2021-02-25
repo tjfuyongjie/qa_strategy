@@ -116,11 +116,16 @@ class QAStrategyStockBase(QAStrategyCTABase):
             new_list.append(self.format_stock_data(item))
 
         res = pd.DataFrame([item for item in new_list])
-        #res['datetime'] = pd.to_datetime(res['datetime'])
-        print(res)
-        res = res.query('volume>1').drop_duplicates(['datetime',
-                                             'code']).set_index(['datetime', 'code']
-                                                      ).loc[:, ['open', 'high', 'low', 'close', 'volume']]
+        try:
+            # res['datetime'] = pd.to_datetime(res['datetime'])
+            print(res)
+            res = res.query('volume>1').drop_duplicates(['datetime',
+                                                         'code']).set_index(['datetime', 'code']
+                                                                            ).loc[:,
+                  ['open', 'high', 'low', 'close', 'volume']]
+        except:
+            res = None
+
 
         return res
 
@@ -189,7 +194,7 @@ class QAStrategyStockBase(QAStrategyCTABase):
                 self.dtcode[code] = str(self.new_data['datetime'])[0:16]
                 self.isupdate = True
 
-        
+
 
 
             self.latest_price[self.new_data['code']] = self.new_data['close']
@@ -240,8 +245,8 @@ class QAStrategyStockBase(QAStrategyCTABase):
 
         self.client = self.database.account
         self.subscriber_client = self.database.subscribe
-        self.acc = QIFI_Account(
-            username=self.strategy_id, password=self.strategy_id, trade_host=mongo_ip)
+        self.acc = QIFI_Account(username=self.strategy_id, password=self.strategy_id, trade_host=mongo_ip)
+        print(self.acc)
         self.acc.initial()
         self.pub = publisher_routing(exchange='QAORDER_ROUTER', host=self.trade_host,
                                      port=self.trade_port, user=self.trade_user, password=self.trade_password)
