@@ -3,13 +3,15 @@
   <component name="ChangeListManager">
     <list default="true" id="66e0949d-f059-44b8-b4da-19f624dab969" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/未命名3-checkpoint.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/qastockbase.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/qastockbase.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/stock_pool.csv" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/stock_pool.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/未命名-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/backtest-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/backtest-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/未命名-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/backtest.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/backtest.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stock_strategy/strategy.log" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/strategy.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/未命名1.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/未命名1.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/未命名3.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/启动命令.py" beforeDir="false" afterPath="$PROJECT_DIR$/启动命令.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/strategy.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/strategy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/单独更新行情.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/单独更新行情.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/未命名.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/未命名.ipynb" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,12 +36,14 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/stock_strategy" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/stock_strategy" />
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">

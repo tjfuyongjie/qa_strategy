@@ -302,6 +302,7 @@ if __name__ == '__main__':
     #stock_pool_list=['000338','000545']
     #DMI = DMI(code=stock_pool_list, frequence='5min',strategy_id='x', start=start, end=end)
     #DMI.run_backtest()
+    stock_pool_list = ['etcusdt']
     DMI = DMI(code=stock_pool_list, frequence='5min', strategy_id='stock_sim', send_wx=True)
     DMI.debug_sim()
     DMI.add_subscriber(qaproid="oL-C4w2cSApfgeB6Uy9028RomZp4")
