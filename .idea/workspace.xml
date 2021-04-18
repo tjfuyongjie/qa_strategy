@@ -3,15 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="66e0949d-f059-44b8-b4da-19f624dab969" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/未命名-checkpoint.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/backtest-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/backtest-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/未命名-checkpoint.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/backtest.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/backtest.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/strategy.log" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/strategy.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/strategy.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/strategy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/coin_test-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/.ipynb_checkpoints/coin_test-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/coin_test.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/coin_test.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_strategy/qacoinbase.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/qacoinbase.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stock_strategy/单独更新行情.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/stock_strategy/单独更新行情.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_strategy/未命名.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/未命名.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/保存指定标的行情.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/保存指定标的行情.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/启动命令.py" beforeDir="false" afterPath="$PROJECT_DIR$/启动命令.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/行情获取.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/行情获取.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,10 +128,11 @@
       <screen x="0" y="23" width="1440" height="836" />
     </state>
     <state width="1419" height="249" key="GridCell.Tab.1.right/0.23.1440.836@0.23.1440.836" timestamp="1610776126881" />
-    <state x="397" y="270" key="com.intellij.ide.util.TipDialog" timestamp="1611813543143">
-      <screen x="0" y="23" width="1440" height="830" />
+    <state x="397" y="272" key="com.intellij.ide.util.TipDialog" timestamp="1618291837088">
+      <screen x="0" y="23" width="1440" height="835" />
     </state>
     <state x="397" y="270" key="com.intellij.ide.util.TipDialog/0.23.1440.830/-2560.23.2560.1417@0.23.1440.830" timestamp="1611813543143" />
+    <state x="397" y="272" key="com.intellij.ide.util.TipDialog/0.23.1440.835@0.23.1440.835" timestamp="1618291837088" />
     <state x="378" y="178" width="683" height="488" key="find.popup" timestamp="1611800935601">
       <screen x="0" y="23" width="1440" height="837" />
     </state>

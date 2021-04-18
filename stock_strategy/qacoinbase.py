@@ -30,6 +30,8 @@ from QUANTAXIS.QAUtil import (
     QA_util_time_stamp
 )
 import re
+from QUANTAXIS.QASU.save_huobi import QA_SU_save_huobi_min,huobi_SYMBOL
+
 
 class QAStrategyCoinBase(QAStrategyCTABase):
 
@@ -117,14 +119,26 @@ class QAStrategyCoinBase(QAStrategyCTABase):
             time_now_min = int(time.strftime("%M", time.localtime()))
             time_now_s = int(time.strftime("%S", time.localtime()))
             frequence_int = int(re.findall("\d+", self.frequence)[0])
-            if (time_now_min%frequence_int == 0 or time_now_s%10 == 0) :
+            if (time_now_min%frequence_int == 0 and time_now_s%30 == 0) :
                 time.sleep(1) # 延迟1s 防止上边的if重复执行
+                QA.QA_util_log_info('{} while开始....'.format(
+                    str(datetime.datetime.now())))
 
-                #new_data = json.loads(str(body, encoding='utf-8'))
-                lastPreMinTime = (datetime.datetime.now()+datetime.timedelta(minutes=-frequence_int)).strftime("%Y-%m-%d %H:%M:%S")
-                preLastPreMinTime = (datetime.datetime.now() + datetime.timedelta(minutes=-2*frequence_int)).strftime(
-                    "%Y-%m-%d %H:%M:%S")
-                self._new_data = QA.QA_fetch_cryptocurrency_min(self.code, preLastPreMinTime, lastPreMinTime, format='pd',
+                code_list = [huobi_SYMBOL.format(x) for x in self.code]
+                if self.dtcode :
+                    preLastPreMinTime =self.dtcode[code_list[0]]
+                    lastPreMinTime=datetime.datetime.strptime(preLastPreMinTime,"%Y-%m-%d %H:%M") + datetime.timedelta(minutes=frequence_int)
+
+                else :
+                    # new_data = json.loads(str(body, encoding='utf-8'))
+                    lastPreMinTime = (datetime.datetime.now() + datetime.timedelta(minutes=-frequence_int)).strftime(
+                        "%Y-%m-%d %H:%M:%S")
+
+                    preLastPreMinTime = (datetime.datetime.now() + datetime.timedelta(minutes=-4 * frequence_int)).strftime(
+                        "%Y-%m-%d %H:%M:%S")
+
+                print(preLastPreMinTime, lastPreMinTime, self.frequence)
+                self._new_data = QA.QA_fetch_cryptocurrency_min(code_list, preLastPreMinTime, lastPreMinTime, format='pd',
                                                               frequence=self.frequence)
 
                 if (self._new_data.empty):
@@ -138,7 +152,7 @@ class QAStrategyCoinBase(QAStrategyCTABase):
 
                 #整理成一个code的一个frequence为一个bar
                 for idx, row in  self._new_data.iterrows():
-                    print("当前row:",row)
+                    #print("当前row:",row)
                     code = row['code']
                     self.latest_price[row['code']] = code
 
@@ -153,7 +167,7 @@ class QAStrategyCoinBase(QAStrategyCTABase):
 
                     self.acc.on_price_change(code, row['close'])
                     bar = pd.DataFrame([row]).set_index(['datetime', 'code']).loc[:, ['open', 'high', 'low', 'close', 'volume']]
-                    print(bar)
+                    #print(bar)
                     self.upcoming_data(bar)
 
     def format_stock_data(self, item):
@@ -183,15 +197,17 @@ class QAStrategyCoinBase(QAStrategyCTABase):
         return d
 
     def _debug_sim(self):
-        print('xxxxxxxxxxx')
         self.running_mode = 'sim'
 
+        QA_SU_save_huobi_min(frequency= self.frequence, fetch_range= self.code)
+
         frequence_int = int(re.findall("\d+", self.frequence)[0])
-        start = (datetime.datetime.now() + datetime.timedelta(minutes=-50 * frequence_int)).strftime(
+        start = (datetime.datetime.now() + datetime.timedelta(minutes=-500 * frequence_int)).strftime(
             "%Y-%m-%d %H:%M:%S")
         end = (datetime.datetime.now() + datetime.timedelta(minutes=-frequence_int)).strftime(
             "%Y-%m-%d %H:%M:%S")
-        self._old_data = QA.QA_fetch_cryptocurrency_min(self.code, start, end, format='pd', frequence=self.frequence).set_index(['datetime', 'code'])
+        code_list =  [huobi_SYMBOL.format(x) for x in self.code]
+        self._old_data = QA.QA_fetch_cryptocurrency_min(code_list, start, end, format='pd', frequence=self.frequence).set_index(['datetime', 'code'])
 
         #print(self._old_data)
         self._old_data = self._old_data.loc[:, ['open', 'high', 'low', 'close', 'volume']]

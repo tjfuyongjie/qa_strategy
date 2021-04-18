@@ -26,7 +26,7 @@ tz=asia/shanghai
 
 
 pip install QUANTAXIS -U
-pip install QIFIAccount -U
+pip install QIFIAccount -Ux
 
 pip install quantaxis_pubsub –U
 
