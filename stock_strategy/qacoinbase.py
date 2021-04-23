@@ -125,17 +125,13 @@ class QAStrategyCoinBase(QAStrategyCTABase):
                     str(datetime.datetime.now())))
 
                 code_list = [huobi_SYMBOL.format(x) for x in self.code]
-                if self.dtcode :
-                    preLastPreMinTime =self.dtcode[code_list[0]]
-                    lastPreMinTime=datetime.datetime.strptime(preLastPreMinTime,"%Y-%m-%d %H:%M") + datetime.timedelta(minutes=frequence_int)
+               
+                # new_data = json.loads(str(body, encoding='utf-8'))
+                lastPreMinTime = (datetime.datetime.now()).strftime(
+                    "%Y-%m-%d %H:%M:%S")
 
-                else :
-                    # new_data = json.loads(str(body, encoding='utf-8'))
-                    lastPreMinTime = (datetime.datetime.now() + datetime.timedelta(minutes=-frequence_int)).strftime(
-                        "%Y-%m-%d %H:%M:%S")
-
-                    preLastPreMinTime = (datetime.datetime.now() + datetime.timedelta(minutes=-4 * frequence_int)).strftime(
-                        "%Y-%m-%d %H:%M:%S")
+                preLastPreMinTime = (datetime.datetime.now() + datetime.timedelta(minutes=-4 * frequence_int)).strftime(
+                    "%Y-%m-%d %H:%M:%S")
 
                 print(preLastPreMinTime, lastPreMinTime, self.frequence)
                 self._new_data = QA.QA_fetch_cryptocurrency_min(code_list, preLastPreMinTime, lastPreMinTime, format='pd',
@@ -147,7 +143,7 @@ class QAStrategyCoinBase(QAStrategyCTABase):
                 self._new_data = self._new_data.loc[:, ['code','open', 'high', 'low', 'close', 'volume','datetime']]
                 #self._market_data.iloc[-1:]
 
-                #print('NEW DATA:', self._new_data)
+                print('NEW DATA:', self._new_data)
 
 
                 #整理成一个code的一个frequence为一个bar
@@ -158,17 +154,17 @@ class QAStrategyCoinBase(QAStrategyCTABase):
 
                     self.running_time = row['datetime']
                     #if self.dt != str(row['datetime'])[0:16]:
-                    if code not in self.dtcode or self.dtcode[code] != str(row['datetime'])[0:16]:
+                    if code not in self.dtcode or self.dtcode[code] < str(row['datetime'])[0:16]:
                         # [0:16]是分钟线位数
                         print('update!!!!!!!!!!!!')
                         self.dtcode[code] = str(row['datetime'])[0:16]
                         self.isupdate = True
 
 
-                    self.acc.on_price_change(code, row['close'])
-                    bar = pd.DataFrame([row]).set_index(['datetime', 'code']).loc[:, ['open', 'high', 'low', 'close', 'volume']]
-                    #print(bar)
-                    self.upcoming_data(bar)
+                        self.acc.on_price_change(code, row['close'])
+                        bar = pd.DataFrame([row]).set_index(['datetime', 'code']).loc[:, ['open', 'high', 'low', 'close', 'volume']]
+                        #print(bar)
+                        self.upcoming_data(bar)
 
     def format_stock_data(self, item):
         code = item.get('code')

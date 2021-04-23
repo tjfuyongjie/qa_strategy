@@ -32,3 +32,5 @@ pip install quantaxis_pubsub –U
 
 -------
 http://127.0.0.1:8029/testk
+        
+/opt/conda/lib/python3.8/site-packages/QUANTAXIS/QAFetch/QAhuobi.py
