@@ -476,7 +476,7 @@ class DMI(QAStrategyCoinBase):
 if __name__ == '__main__':
     # QA.QA_util_get_last_day(QA.QA_util_get_real_date(str(datetime.date.today())),), str(datetime.datetime.now()),
     print(datetime.datetime.now())
-    frequence = '5min'
+    frequence = '60min'
     frequence_int = int(re.findall("\d+", frequence)[0])
     start = (datetime.datetime.now() + datetime.timedelta(minutes=-50 * frequence_int)).strftime("%Y-%m-%d %H:%M:%S")
     end = (datetime.datetime.now() + datetime.timedelta(minutes=-frequence_int)).strftime(

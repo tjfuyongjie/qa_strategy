@@ -19,7 +19,7 @@ class sub_realtime(QA_Thread):
         self.db = pymongo.MongoClient(mongo_ip).qa.REALTIMEPRO_FIX
         '''
         import pandas as pd
-        stock_pool_pd = pd.read_csv("/root/sim/stock_strategy/stock_pool.csv", encoding='utf-8',
+        stock_pool_pd = pd.read_csv("/root/qa_strategy/stock_strategy/stock_pool.csv", encoding='utf-8',
                                     converters={'code': str});
         self.stock_pool_list = stock_pool_pd['code'].tolist()
         '''

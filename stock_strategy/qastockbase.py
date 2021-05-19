@@ -53,8 +53,7 @@ class QAStrategyStockBase(QAStrategyCTABase):
         self.code = code
         self.send_wx = send_wx
         self.dtcode={}
-        import pandas as pd
-        stock_pool_pd = pd.read_csv("/root/sim/stock_strategy/stock_pool.csv", encoding='utf-8',
+        stock_pool_pd = pd.read_csv("/root/qa_strategy/stock_strategy/stock_pool.csv", encoding='utf-8',
                                     converters={'code': str});
         self.stock_pool_list = stock_pool_pd['code'].tolist()
         '''
@@ -235,6 +234,7 @@ class QAStrategyStockBase(QAStrategyCTABase):
         self._old_data = QA.QA_fetch_stock_min(self.code, QA.QA_util_get_last_day(
             QA.QA_util_get_real_date(str(datetime.date.today())), 5), str(datetime.datetime.now()), format='pd',
                                                frequence=self.frequence).set_index(['datetime', 'code'])
+        print(self._old_data)
         #当天启动前行情数据
         sim_stock_df = self.getSimStock(self.code, self.frequence)
         self._old_data = pd.concat([self._old_data, sim_stock_df])

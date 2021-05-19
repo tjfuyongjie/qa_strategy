@@ -205,8 +205,8 @@ class QAStrategyCoinBase(QAStrategyCTABase):
             "%Y-%m-%d %H:%M:%S")
         end = (datetime.datetime.now() + datetime.timedelta(minutes=-frequence_int)).strftime(
             "%Y-%m-%d %H:%M:%S")
-        code_list =  [huobi_SYMBOL.format(x) for x in self.code]
-        self._old_data = QA.QA_fetch_cryptocurrency_min(code_list, start, end, format='pd', frequence=self.frequence).set_index(['datetime', 'code'])
+        code_list =  self.code
+        self._old_data = QA.QA_fetch_stock_min(code_list, start, end, format='pd', frequence=self.frequence).set_index(['datetime', 'code'])
 
         #print(self._old_data)
         self._old_data = self._old_data.loc[:, ['open', 'high', 'low', 'close', 'volume']]

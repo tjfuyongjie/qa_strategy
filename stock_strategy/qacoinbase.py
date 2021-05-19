@@ -49,6 +49,7 @@ class QAStrategyCoinBase(QAStrategyCTABase):
         self.code = code
         self.dtcode = {}
         self.send_wx = send_wx
+        self.frequenceInt = 0
         '''
         self.subscriber = subscriber_topic(
             host='www.yutiansut.com',
@@ -118,13 +119,13 @@ class QAStrategyCoinBase(QAStrategyCTABase):
         while True:
             time_now_min = int(time.strftime("%M", time.localtime()))
             time_now_s = int(time.strftime("%S", time.localtime()))
-            frequence_int = int(re.findall("\d+", self.frequence)[0])
-            if (time_now_min%frequence_int == 0 and time_now_s%30 == 0) :
+            frequence_int = self.frequenceInt
+            if (time_now_min%frequence_int == 0 and (time_now_s%30 == 0 or time_now_s%59 == 0)) :
                 time.sleep(1) # 延迟1s 防止上边的if重复执行
                 QA.QA_util_log_info('{} while开始....'.format(
                     str(datetime.datetime.now())))
 
-                code_list = [huobi_SYMBOL.format(x) for x in self.code]
+                code_list = self.code
                
                 # new_data = json.loads(str(body, encoding='utf-8'))
                 lastPreMinTime = (datetime.datetime.now()).strftime(
@@ -194,10 +195,12 @@ class QAStrategyCoinBase(QAStrategyCTABase):
 
     def _debug_sim(self):
         self.running_mode = 'sim'
+        
 
         QA_SU_save_huobi_min(frequency= self.frequence, fetch_range= self.code)
 
         frequence_int = int(re.findall("\d+", self.frequence)[0])
+        self.frequenceInt = frequence_int
         start = (datetime.datetime.now() + datetime.timedelta(minutes=-500 * frequence_int)).strftime(
             "%Y-%m-%d %H:%M:%S")
         end = (datetime.datetime.now() + datetime.timedelta(minutes=-frequence_int)).strftime(
@@ -295,7 +298,7 @@ class QAStrategyCoinBase(QAStrategyCTABase):
             QA.QA_util_log_info('direction{} offset {} price{} volume{}'.format(
                 direction, offset, price, volume))
 
-            if self.check_order(direction, offset):
+            if self.check_order(direction, offset, code):
                 self.last_order_towards = {'BUY': '', 'SELL': ''}
                 self.last_order_towards[direction] = offset
                 now = str(datetime.datetime.now())

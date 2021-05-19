@@ -10,7 +10,6 @@ import numpy as np
 import urllib.parse
 from QUANTAXIS.QASU.save_huobi import QA_SU_save_huobi_min,huobi_SYMBOL
 from zhibiao import *
-import requests
 
 FIRST_PRIORITY = [
     '1inchusdt',
@@ -87,12 +86,12 @@ class DMI(QAStrategyCoinBase):
         print("rsi", rsibuysell)
         return 
         '''
-        volBig = self.volBig(datadf)
+        
         if (frequenceInt > 1):
-            if (wrRst == -1 and dimRst == -1 and macdRst == -1 and volBig == 1):
+            if (wrRst == -1 and dimRst == -1 and macdRst == -1 ):
                 print('buy')
                 self.sendWx(code, 'buy-wr-dmi-macd', frequenceInt)
-            elif (wrRst == 1 and dimRst == 1 and macdRst == 1 and volBig == 1):
+            elif (wrRst == 1 and dimRst == 1 and macdRst == 1):
                 print('sell')
                 self.sendWx(code, 'sell-wr-dmi-macd', frequenceInt)
             else:
@@ -102,9 +101,9 @@ class DMI(QAStrategyCoinBase):
         
             
         isdev = self.check_deviating(datadf)
-        if (isdev == -1 and volBig == 1):
+        if (isdev == -1):
             self.sendWx(code, 'buy-macd', frequenceInt)
-        elif (isdev == 1 and volBig == 1):
+        elif (isdev == 1):
             self.sendWx(code, 'sellmacd', frequenceInt)
         else:
             print("nomal")
@@ -135,15 +134,13 @@ class DMI(QAStrategyCoinBase):
         # print(newbar.index)
         #self.on_min_bar(code, allBarDf,1)
         
-        self.on_min_bar(code, allBarDf,5)
+        #self.on_min_bar(code, allBarDf,5)
         
         #self.on_min_bar(code, allBarDf,15)
         
-        self.on_min_bar(code, allBarDf,30)
+        #self.on_min_bar(code, allBarDf,30)
 
         self.on_min_bar(code, allBarDf,60)
-        
-        self.on_min_bar(code, allBarDf,240)
 
         try:
             # 当前stock code
@@ -160,7 +157,7 @@ class DMI(QAStrategyCoinBase):
         # print('~~~~~~~~~~~~~~~~~~~~~~')
         # print(res.iloc[-1])
         # print('---------xxxxxxxxxxxx---------')
-        # print(self.market_data)
+        # print(self.market_data)听听歌c v h vv
         '''
         if res.MA2[-1] > res.MA5[-1]:
 
@@ -181,19 +178,7 @@ class DMI(QAStrategyCoinBase):
         '''
 
    
-    def volBig(self, dayData):
-        return 1
-        volData = QA.QA_indicator_MA_VOL(dayData, 10)
-        vol10 = volData['MA_VOL10'].values
-        vol = dayData['volume'].values
-       
-        if ((vol[-1] > 1.5 * vol10[-2]) or \
-            (vol[-2] > 1.5 * vol10[-3]) or \
-            (vol[-3] > 1.5 * vol10[-4]) ):
-            return 1
-        else:
-            return 0
-  
+   
     
     
     def bollBuyOrSell(self, dayData):
@@ -391,16 +376,10 @@ class DMI(QAStrategyCoinBase):
         # pprint.pprint(self.qifiacc.message)
 
     def sendWx(self, code, target, position):
-       
+        import requests
         ordertime = str(self.running_time)
         start = datetime.datetime.now().strftime("%H:%M:%S")
         target = target+"   时间:"+start
-       
-        ordertimeInt = datetime.datetime.strptime(ordertime, '%Y-%m-%d %H:%M:%S')
-        now = datetime.datetime.now()
-        delay = int((now - ordertimeInt).total_seconds()-self.frequenceInt*60)
-        dayDataNew = self.get_code_marketdata(code).tail(20)
-        
         '''
         requests.post(
             "http://www.yutiansut.com/signal?user_id=oL-C4w2cSApfgeB6Uy9028RomZp4&template=xiadan_report&strategy_id=test1&realaccount=133496&code=" + str(
@@ -409,12 +388,15 @@ class DMI(QAStrategyCoinBase):
         
         '''
         
-        
         headers={
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
             # ... other header
         }
         
+        ordertimeInt = datetime.datetime.strptime(ordertime, '%Y-%m-%d %H:%M:%S')
+        now = datetime.datetime.now()
+        delay = int((now - ordertimeInt).total_seconds()-self.frequenceInt*60)
+        dayDataNew = self.get_code_marketdata(code).tail(20)
         msgtpl = {
             "msgtype": "markdown",
             "markdown": {
@@ -503,7 +485,7 @@ if __name__ == '__main__':
     
     # QA.QA_util_get_last_day(QA.QA_util_get_real_date(str(datetime.date.today())),), str(datetime.datetime.now()),
     print(datetime.datetime.now())
-    frequence = '5min'
+    frequence = '60min'
     frequence_int = int(re.findall("\d+", frequence)[0])
     start = (datetime.datetime.now() + datetime.timedelta(minutes=-50 * frequence_int)).strftime("%Y-%m-%d %H:%M:%S")
     end = (datetime.datetime.now() + datetime.timedelta(minutes=-frequence_int)).strftime(

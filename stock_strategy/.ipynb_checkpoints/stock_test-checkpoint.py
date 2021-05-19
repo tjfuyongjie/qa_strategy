@@ -1,5 +1,4 @@
 import QUANTAXIS as QA
-from qacoinbase import *
 import pprint
 import time
 import datetime
@@ -11,47 +10,11 @@ import urllib.parse
 from QUANTAXIS.QASU.save_huobi import QA_SU_save_huobi_min,huobi_SYMBOL
 from zhibiao import *
 import requests
-
-FIRST_PRIORITY = [
-    '1inchusdt',
-    'atomusdt',
-    'algousdt',
-    'adausdt',
-    'bchusdt',
-    'bsvusdt',
-    'bttusdt',
-    'crvusdt',
-    'dashusdt',
-    'dogeusdt',
-    'dotusdt',
-    'eosusdt',
-    'etcusdt',
-    'ethusdt',
-    'enjusdt',
-    'filusdt',
-    'flowusdt',
-    'htusdt',
-    'ltcusdt',
-    'linkusdt',
-    'mxusdt',
-    'neousdt',
-    'isotusdt',
-    'trxusdt',
-    'xmrusdt',
-    'xrpusdt',
-    'xlmusdt',
-    'zecusdt',
-    'zrxusdt',
-    'zenusdt',
-    'xtzusdt',
-    'sunusdt',
-    'sushiusdt',
-    'uniusdt'
-]
+import re
+from qastockbase import QAStrategyStockBase
 
 
-class DMI(QAStrategyCoinBase):
-    
+class DMI(QAStrategyStockBase):
     
     
     def user_init(self):
@@ -137,13 +100,13 @@ class DMI(QAStrategyCoinBase):
         
         self.on_min_bar(code, allBarDf,5)
         
-        #self.on_min_bar(code, allBarDf,15)
+        self.on_min_bar(code, allBarDf,15)
         
         self.on_min_bar(code, allBarDf,30)
 
         self.on_min_bar(code, allBarDf,60)
         
-        self.on_min_bar(code, allBarDf,240)
+        #self.on_min_bar(code, allBarDf,240)
 
         try:
             # 当前stock code
@@ -401,53 +364,16 @@ class DMI(QAStrategyCoinBase):
         delay = int((now - ordertimeInt).total_seconds()-self.frequenceInt*60)
         dayDataNew = self.get_code_marketdata(code).tail(20)
         
-        '''
+       
         requests.post(
             "http://www.yutiansut.com/signal?user_id=oL-C4w2cSApfgeB6Uy9028RomZp4&template=xiadan_report&strategy_id=test1&realaccount=133496&code=" + str(
                 code) + "&order_direction=" + target + "&order_offset=OPEN&price=xxx&volume=" + str(
                 position) + "级别&order_time=" + ordertime)
         
-        '''
         
         
-        headers={
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            # ... other header
-        }
-        
-        msgtpl = {
-            "msgtype": "markdown",
-            "markdown": {
-                "content": "方向: <font color=\"warning\">"+target +"</font>。\n\
-                      >标的:<font color=\"comment\">"+ str(code) +"</font>\n\
-                      >级别:<font color=\"comment\">"+str(position)+"min</font>\n\
-                      >收盘:<font color=\"comment\">"+str(dayDataNew['close'][-1])+"min</font>\n\
-                      >延迟:<font color=\"comment\">"+str(delay)+"秒</font>",
-                "mentioned_list":["@all"]
-            }
-        }
-        
-        
-        if (position == 15): 
-            robot_url = "" 
-        elif (position == 5):
-            robot_url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=de1d82a7-d0fe-4c14-a8d4-31fba1a9b5dd"
-        elif (position == 30):
-            robot_url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=b18f1ebc-43c5-4c5c-a0ad-ba86243e0436"
-        elif (position == 60):
-            robot_url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=1757c4bd-09b7-4790-abc1-ebbe33b004c4"
-        
-        volume=10*position
-        ''' 
-        if (target.find('buy')):
-            self.send_order( direction='BUY', offset='OPEN', code=code, price=dayDataNew['close'][-1], volume=volume, order_id='',)
-        elif (target.find('sell')):
-            self.send_order(direction='SELL', offset='OPEN', code=code, price=dayDataNew['close'][-1], volume=volume, order_id='',)
-        '''
-        if (robot_url) :
-            data = json.dumps(msgtpl)
-            r = requests.post(robot_url, data, auth=('Content-Type', 'application/json'))
-
+       
+       
     def getData(self, stock, frequence):
         end = self.running_time  # str(datetime.datetime.now())
         if (frequence == "day"):
@@ -508,17 +434,13 @@ if __name__ == '__main__':
     start = (datetime.datetime.now() + datetime.timedelta(minutes=-50 * frequence_int)).strftime("%Y-%m-%d %H:%M:%S")
     end = (datetime.datetime.now() + datetime.timedelta(minutes=-frequence_int)).strftime(
         "%Y-%m-%d %H:%M:%S")
-    #stock_pool_pd = pd.read_csv("/root/sim/stock_strategy/coin_pool.csv", encoding='utf-8', converters={'code': str});
-    #stock_pool_list = stock_pool_pd['code'].tolist()
+    stock_pool_pd = pd.read_csv("/root/qa_strategy/stock_strategy/stock_pool.csv", encoding='utf-8', converters={'code': str});
+    stock_pool_list = stock_pool_pd['code'].tolist()
     # print(stock_pool_list)
     print(start, end)
     # stock_pool_list=['000338','000545']
-    # DMI = DMI(code=stock_pool_list, frequence='5min',strategy_id='x', start=start, end=end)
-    # DMI.run_backtest()
-    #stock_pool_list = ["HUOBI." + x for x in FIRST_PRIORITY]
-    code_list = FIRST_PRIORITY
-    #code_list = [ 'flowusdt','uniusdt']
-    DMI = DMI(code=code_list, frequence=frequence, strategy_id='coin_sim', send_wx=True)
+    
+    DMI = DMI(code=stock_pool_list, frequence=frequence, strategy_id='stock_sim', send_wx=True)
     #DMI.send_order(self,  'BUY', offset='OPEN', code='1', price=100, volume=100, order_id='',)
     DMI.debug_sim()
     DMI.add_subscriber(qaproid="oL-C4w2cSApfgeB6Uy9028RomZp4")

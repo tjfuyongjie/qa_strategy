@@ -8,6 +8,10 @@ import copy
 # 第三方函数库
 import numpy as np
 import urllib.parse
+from QUANTAXIS.QASU.save_huobi import QA_SU_save_huobi_min,huobi_SYMBOL
+from zhibiao import *
+import requests
+
 FIRST_PRIORITY = [
     '1inchusdt',
     'atomusdt',
@@ -47,7 +51,9 @@ FIRST_PRIORITY = [
 
 
 class DMI(QAStrategyCoinBase):
-
+    
+    
+    
     def user_init(self):
         print("我是用户初始化。。。。" + str(self.code))
 
@@ -59,9 +65,8 @@ class DMI(QAStrategyCoinBase):
         print("每日收盘运行。。。。")
         pass
 
-    def on_30min_bar(self, code, newbar):
+    def on_min_bar(self, code, newbar, frequenceInt):
         # dayData = self.getData(self.code, '30m')
-        frequenceInt = 30
         datadf = self.formatData(newbar, frequenceInt)
         lasttime = pd.to_datetime(datadf.index.values[-1])
         # 跳过
@@ -73,28 +78,34 @@ class DMI(QAStrategyCoinBase):
         # print(dimRst)
         # return
         wrRst = self.wrBuyOrSell(datadf)
-
-        if (wrRst == -1 and dimRst == -1):
-            print('buy')
-            self.sendWx(code, 'buy-wr', frequenceInt)
-        elif (wrRst == 1 and dimRst == 1):
-            print('sell')
-            self.sendWx(code, 'sell-wr', frequenceInt)
-        else:
-            print('30m:keep')
+        macdRst = self.macdBuyOrSell(datadf)
         
-        if (dimRst == -1) :
-            self.sendWx(code, 'buy-dmi', frequenceInt)
-        elif (dimRst == 1) :
-            self.sendWx(code, 'sell-dmi', frequenceInt)
-        else :
-            print("dim nomal")
+        '''
+        # rsi 高抛低吸
+        rsibuyselldf = datadf.add_func(rsi.RSI)
+        rsibuysell=rsibuyselldf.tail(1).values
+        print("rsi", rsibuysell)
+        return 
+        '''
+        volBig = self.volBig(datadf)
+        if (frequenceInt > 1):
+            if (wrRst == -1 and dimRst == -1 and macdRst == -1 and volBig == 1):
+                print('buy')
+                self.sendWx(code, 'buy-wr-dmi-macd', frequenceInt)
+            elif (wrRst == 1 and dimRst == 1 and macdRst == 1 and volBig == 1):
+                print('sell')
+                self.sendWx(code, 'sell-wr-dmi-macd', frequenceInt)
+            else:
+                print(str(frequenceInt)+'m:keep')
+            
+           
+        
             
         isdev = self.check_deviating(datadf)
-        if (isdev == -1):
+        if (isdev == -1 and volBig == 1):
             self.sendWx(code, 'buy-macd', frequenceInt)
-        elif (isdev == 1):
-            self.sendWx(code, 'sell-macd', frequenceInt)
+        elif (isdev == 1 and volBig == 1):
+            self.sendWx(code, 'sellmacd', frequenceInt)
         else:
             print("nomal")
             
@@ -108,92 +119,7 @@ class DMI(QAStrategyCoinBase):
         
         return {}
 
-    def on_15min_bar(self, code, newbar):
-
-        frequenceInt = 15
-        datadf = self.formatData(newbar, frequenceInt)
-        lasttime = pd.to_datetime(datadf.index.values[-1])
-        # 跳过
-        if str(lasttime) != str(self.running_time):
-            return {}
-
-        # print(datadf)
-        # 开始策略
-        dimRst = self.dimBuyOrSell(datadf)
-        # print(dimRst)
-        # return
-        wrRst = self.wrBuyOrSell(datadf)
-
-        if (wrRst == -1 and dimRst == -1):
-            print('buy')
-            self.sendWx(code, 'buy-wr', frequenceInt)
-        elif (wrRst == 1 and dimRst == 1):
-            print('sell')
-            self.sendWx(code, 'sell-wr', frequenceInt)
-        else:
-            print('15m:keep')
-         
-        if (dimRst == -1) :
-            self.sendWx(code, 'buy-dmi', frequenceInt)
-        elif (dimRst == 1) :
-            self.sendWx(code, 'sell-dmi', frequenceInt)
-        else :
-            print("dim nomal")
-            
-        isdev = self.check_deviating(datadf)
-        if (isdev == -1):
-            self.sendWx(code, 'buy-macd', frequenceInt)
-        elif (isdev == 1):
-            self.sendWx(code, 'sell-macd', frequenceInt)
-        else:
-            print("nomal")
-            
-        bollRst = self.bollBuyOrSell(datadf)
-        if (bollRst == -1):
-            self.sendWx(code, 'buy-boll', frequenceInt)
-        elif (bollRst == 1):
-            self.sendWx(code, 'sell-boll', frequenceInt)
-        else:
-            print(str(frequenceInt)+'m:keep')
-        return {}
-
-    def on_5min_bar(self, code, newbar):
-        frequenceInt = 5
-        datadf = self.formatData(newbar, frequenceInt)
-        lasttime = pd.to_datetime(datadf.index.values[-1])
-        # 跳过
-        if str(lasttime) != str(self.running_time):
-            return {}
-
-        # print(datadf)
-        # 开始策略
-        # macdRst = self.macdBuyOrSell(datadf)
-        dimRst = self.dimBuyOrSell(datadf)
-        # wrRst = self.wrBuyOrSell(datadf)
-
-        isdev = self.check_deviating(datadf)
-        if (isdev == -1):
-            self.sendWx(code, 'buy-macd', frequenceInt)
-        elif (isdev == 1):
-            self.sendWx(code, 'sell-macd', frequenceInt)
-        else:
-            print("nomal")
-
-        if (dimRst == -1) :
-            self.sendWx(code, 'buy-dmi', frequenceInt)
-        elif (dimRst == 1) :
-            self.sendWx(code, 'sell-dmi', frequenceInt)
-        else :
-            print("dim nomal")
-
-        bollRst = self.bollBuyOrSell(datadf)
-        if (bollRst == -1):
-            self.sendWx(code, 'buy-boll', frequenceInt)
-        elif (bollRst == 1):
-            self.sendWx(code, 'sell-boll', frequenceInt)
-        else:
-            print('5m:keep')
-        return {}
+    
 
     # 一个stock code 一个bar
     def on_bar(self, bar):
@@ -204,15 +130,20 @@ class DMI(QAStrategyCoinBase):
 
         allBarDf = self.get_code_marketdata(code)
         print('newbar.......', code, allBarDf.tail(20))
+        datadf = self.formatData(allBarDf, 30)
+        print(datadf.tail(20))
         # print(newbar.index)
+        #self.on_min_bar(code, allBarDf,1)
         
-        rst30minDict = self.on_30min_bar(code, allBarDf)
+        self.on_min_bar(code, allBarDf,5)
         
-        rst15minDict = self.on_15min_bar(code, allBarDf)
+        #self.on_min_bar(code, allBarDf,15)
         
-        rst5minDict = self.on_5min_bar(code, allBarDf)
+        self.on_min_bar(code, allBarDf,30)
 
-
+        self.on_min_bar(code, allBarDf,60)
+        
+        self.on_min_bar(code, allBarDf,240)
 
         try:
             # 当前stock code
@@ -229,7 +160,7 @@ class DMI(QAStrategyCoinBase):
         # print('~~~~~~~~~~~~~~~~~~~~~~')
         # print(res.iloc[-1])
         # print('---------xxxxxxxxxxxx---------')
-        # print(self.market_data)听听歌c v h vv
+        # print(self.market_data)
         '''
         if res.MA2[-1] > res.MA5[-1]:
 
@@ -249,9 +180,22 @@ class DMI(QAStrategyCoinBase):
                 self.send_order('SELL', 'CLOSE', price=bar['close'], volume=1)
         '''
 
-    def sendOrder():
-        return
-
+   
+    def volBig(self, dayData):
+        return 1
+        volData = QA.QA_indicator_MA_VOL(dayData, 10)
+        vol10 = volData['MA_VOL10'].values
+        vol = dayData['volume'].values
+       
+        if ((vol[-1] > 1.5 * vol10[-2]) or \
+            (vol[-2] > 1.5 * vol10[-3]) or \
+            (vol[-3] > 1.5 * vol10[-4]) ):
+            return 1
+        else:
+            return 0
+  
+    
+    
     def bollBuyOrSell(self, dayData):
         bollData = QA.QA_indicator_BOLL(dayData)
         bollup = bollData['UB'].values
@@ -447,39 +391,62 @@ class DMI(QAStrategyCoinBase):
         # pprint.pprint(self.qifiacc.message)
 
     def sendWx(self, code, target, position):
-        import requests
+       
         ordertime = str(self.running_time)
-        start = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        target = target+" 时间："+start
+        start = datetime.datetime.now().strftime("%H:%M:%S")
+        target = target+"   时间:"+start
+       
+        ordertimeInt = datetime.datetime.strptime(ordertime, '%Y-%m-%d %H:%M:%S')
+        now = datetime.datetime.now()
+        delay = int((now - ordertimeInt).total_seconds()-self.frequenceInt*60)
+        dayDataNew = self.get_code_marketdata(code).tail(20)
+        
+        '''
         requests.post(
             "http://www.yutiansut.com/signal?user_id=oL-C4w2cSApfgeB6Uy9028RomZp4&template=xiadan_report&strategy_id=test1&realaccount=133496&code=" + str(
                 code) + "&order_direction=" + target + "&order_offset=OPEN&price=xxx&volume=" + str(
                 position) + "级别&order_time=" + ordertime)
         
+        '''
+        
+        
         headers={
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
             # ... other header
         }
+        
         msgtpl = {
             "msgtype": "markdown",
             "markdown": {
                 "content": "方向: <font color=\"warning\">"+target +"</font>。\n\
                       >标的:<font color=\"comment\">"+ str(code) +"</font>\n\
                       >级别:<font color=\"comment\">"+str(position)+"min</font>\n\
-                      >时间:<font color=\"comment\">"+ordertime+"</font>",
+                      >收盘:<font color=\"comment\">"+str(dayDataNew['close'][-1])+"min</font>\n\
+                      >延迟:<font color=\"comment\">"+str(delay)+"秒</font>",
                 "mentioned_list":["@all"]
             }
         }
         
-        msgdata = urllib.parse.urlencode(msgtpl).encode()
-        #wx_url1 = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=cb38f182-d6c4-4442-91a8-c3cd3438c008"
-        wx_url2 = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=99c6e8a3-fda5-4586-98bf-c168c89761ea"
-        #wx_url3 = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=1f252856-fbfb-4b4c-850c-257de5243912"
-        data = json.dumps(msgtpl)
-        #r = requests.post(wx_url1, data, auth=('Content-Type', 'application/json'))
-        r = requests.post(wx_url2, data, auth=('Content-Type', 'application/json'))
-        #r = requests.post(wx_url3, data, auth=('Content-Type', 'application/json'))
-        #requests.get(wx_url, headers=headers)
+        
+        if (position == 15): 
+            robot_url = "" 
+        elif (position == 5):
+            robot_url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=de1d82a7-d0fe-4c14-a8d4-31fba1a9b5dd"
+        elif (position == 30):
+            robot_url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=b18f1ebc-43c5-4c5c-a0ad-ba86243e0436"
+        elif (position == 60):
+            robot_url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=1757c4bd-09b7-4790-abc1-ebbe33b004c4"
+        
+        volume=10*position
+        ''' 
+        if (target.find('buy')):
+            self.send_order( direction='BUY', offset='OPEN', code=code, price=dayDataNew['close'][-1], volume=volume, order_id='',)
+        elif (target.find('sell')):
+            self.send_order(direction='SELL', offset='OPEN', code=code, price=dayDataNew['close'][-1], volume=volume, order_id='',)
+        '''
+        if (robot_url) :
+            data = json.dumps(msgtpl)
+            r = requests.post(robot_url, data, auth=('Content-Type', 'application/json'))
 
     def getData(self, stock, frequence):
         end = self.running_time  # str(datetime.datetime.now())
@@ -524,8 +491,8 @@ class DMI(QAStrategyCoinBase):
             # 'amount': 'sum'
 
         }
-        periodInt = frequenceInt/frequenceBaseInt
-        period = str(periodInt) + "T"
+        #periodInt = frequenceInt/frequenceBaseInt
+        period = str(frequenceInt) + "T"
         data = mydata.resample(period, closed='right', label='right').apply(ohlc_dict)
         data['code'] = code
         data['type'] = frequence
@@ -533,6 +500,7 @@ class DMI(QAStrategyCoinBase):
 
 
 if __name__ == '__main__':
+    
     # QA.QA_util_get_last_day(QA.QA_util_get_real_date(str(datetime.date.today())),), str(datetime.datetime.now()),
     print(datetime.datetime.now())
     frequence = '5min'
@@ -551,5 +519,6 @@ if __name__ == '__main__':
     code_list = FIRST_PRIORITY
     #code_list = [ 'flowusdt','uniusdt']
     DMI = DMI(code=code_list, frequence=frequence, strategy_id='coin_sim', send_wx=True)
+    #DMI.send_order(self,  'BUY', offset='OPEN', code='1', price=100, volume=100, order_id='',)
     DMI.debug_sim()
     DMI.add_subscriber(qaproid="oL-C4w2cSApfgeB6Uy9028RomZp4")

@@ -21,9 +21,11 @@ tz=asia/shanghai
 
 更新 stock_block_list 报错的，环境或者docker中 运行 pip install xlrd -i https://pypi.doubanio.com/simple
 
-30 09 * * * /opt/conda/bin/python /root/sim/stock_strategy/strategy.py > /root/sim/stock_strategy/strategy.log
-29 09 * * * /opt/conda/bin/python /root/sim/sub_QAREALTIME_FIX.py
+#30 09 * * * /opt/conda/bin/python /root/sim/stock_strategy/strategy.py > /root/qa_strategy/stock_strategy/strategy.log
+#29 09 * * * /opt/conda/bin/python /root/sim/sub_QAREALTIME_FIX.py
 
+/opt/conda/bin/python /root/qa_strategy/sub_QAREALTIME_FIX.py
+/opt/conda/bin/python /root/qa_strategy/stock_strategy/stock_test.py
 
 pip install QUANTAXIS -U
 pip install QIFIAccount -Ux
@@ -33,4 +35,4 @@ pip install quantaxis_pubsub –U
 -------
 http://127.0.0.1:8029/testk
         
-/opt/conda/lib/python3.8/site-packages/QUANTAXIS/QAFetch/QAhuobi.py
+python /opt/conda/lib/python3.8/site-packages/QUANTAXIS/QAFetch/QAhuobi.py

@@ -29,6 +29,7 @@ from QUANTAXIS.QAUtil import (
     QA_util_time_stamp
 )
 
+from QUANTAXIS.QAData import (QA_DataStruct_Stock_min)
 
 class QAStrategyStockBase(QAStrategyCTABase):
 
@@ -51,10 +52,14 @@ class QAStrategyStockBase(QAStrategyCTABase):
 
         self.code = code
         self.send_wx = send_wx
+        self.dtcode={}
+        stock_pool_pd = pd.read_csv("/root/qa_strategy/stock_strategy/stock_pool.csv", encoding='utf-8',
+                                    converters={'code': str});
+        self.stock_pool_list = stock_pool_pd['code'].tolist()
         '''
 
         '''
-        print('jjjjjjj')
+        print('订阅远程行情开始：')
         self.subscriber = subscriber_topic(
             host='www.yutiansut.com',
             port='5678',
@@ -62,6 +67,8 @@ class QAStrategyStockBase(QAStrategyCTABase):
             durable=False,
             vhost='/',
             routing_key='*')
+        #pymongo.MongoClient(mongo_ip).qa.drop_collection('REALTIMEPRO_FIX')
+        self.db = pymongo.MongoClient(mongo_ip).qa.REALTIMEPRO_FIX
 
     def subscribe_data(self, code, frequence, data_host, data_port, data_user, data_password):
         """[summary]
@@ -79,13 +86,57 @@ class QAStrategyStockBase(QAStrategyCTABase):
         self.sub.callback = self.callback
         self.subscriber.callback = self.callback
 
+    def getSimStock(self, codes, frequence):
+        code_list = []
+        for code in codes:
+            if (code.startswith('3') or code.startswith('0')):
+                code_list.append('SZ'+str(code))
+            elif(code.startswith('6')) :
+                code_list.append('SH' + str(code))
+
+        cursor = self.db.find(
+            {
+                'code': {
+                    '$in': code_list
+                },
+                "datetime":
+                    {
+                        "$gte": str(datetime.date.today()),
+                        "$lte": str(datetime.datetime.now())
+                    },
+                'frequence': frequence
+            },
+            {"_id": 0},
+            batch_size=10000
+        )
+
+        new_list = []
+        for item in cursor:
+            new_list.append(self.format_stock_data(item))
+
+        res = pd.DataFrame([item for item in new_list])
+        try:
+            # res['datetime'] = pd.to_datetime(res['datetime'])
+            print(res)
+            res = res.query('volume>1').drop_duplicates(['datetime',
+                                                         'code']).set_index(['datetime', 'code']
+                                                                            ).loc[:,
+                  ['open', 'high', 'low', 'close', 'volume']]
+        except:
+            res = None
+
+
+        return res
+
+
     def upcoming_data(self, new_bar):
         """upcoming_bar :
 
         Arguments:
             new_bar {json} -- [description]
         """
-        self._market_data = pd.concat([self._old_data, new_bar])
+
+        self._market_data = pd.concat([self._old_data.tail(200), new_bar])
         # QA.QA_util_log_info(self._market_data)
 
         if self.isupdate:
@@ -94,6 +145,8 @@ class QAStrategyStockBase(QAStrategyCTABase):
 
         self.update_account()
         # self.positions.on_price_change(float(new_bar['close']))
+
+        #print('new_bar...',new_bar)
         self.on_bar(new_bar)
 
     def ind2str(self, ind, ind_type):
@@ -114,52 +167,63 @@ class QAStrategyStockBase(QAStrategyCTABase):
             c {[type]} -- [description]
             body {[type]} -- [description]
         """
+        #print(body)
 
         new_data = json.loads(str(body, encoding='utf-8'))
-        print('NEW DATA:', new_data)
+        self.newbar(new_data)
+
+    def newbar(self, new_data):
 
         for item in new_data:
-            # print(item)
+
             new_dict = self.format_stock_data(item)
-            self.new_data.append(new_dict)
+            self.new_data = new_dict
+            # 只接受5min
+            if (not self.new_data or self.new_data['type'] != '5min'):
+                # print('new_data 不存在', new_data)
+                continue
 
-        self.latest_price[self.new_data['code']] = self.new_data['close']
 
-        self.running_time = self.new_data['datetime']
-        if self.dt != str(self.new_data['datetime'])[0:16]:
-            # [0:16]是分钟线位数
-            print('update!!!!!!!!!!!!')
-            self.dt = str(self.new_data['datetime'])[0:16]
-            self.isupdate = True
 
-        self.acc.on_price_change(self.new_data['code'], self.new_data['close'])
-        bar = pd.DataFrame([self.new_data]).set_index(['datetime', 'code']
-                                                      ).loc[:, ['open', 'high', 'low', 'close', 'volume']]
-        self.upcoming_data(bar)
+            self.running_time = self.new_data['datetime']
+            code = self.new_data['code']
+            if code not in self.dtcode or self.dtcode[code] != str(self.new_data['datetime'])[0:16]:
+                # [0:16]是分钟线位数
+                print('update!!!!!!!!!!!! dt:')
+                self.dtcode[code] = str(self.new_data['datetime'])[0:16]
+                self.isupdate = True
+
+
+
+
+            self.latest_price[self.new_data['code']] = self.new_data['close']
+            self.acc.on_price_change(self.new_data['code'], self.new_data['close'])
+            bar = pd.DataFrame([self.new_data]).set_index(['datetime', 'code'])
+            #bar = QA_DataStruct_Stock_min(bar)
+            bar = bar.loc[:, ['open', 'high', 'low', 'close', 'volume']]
+            #print('bar:.......',bar)
+            self.upcoming_data(bar)
 
     def format_stock_data(self, item):
         code = item.get('code')
         new_code = code[-6:]
+
         d = {}
-        # print(new_code)
-        # print(item)
-        import pandas as pd
-        stock_pool_pd = pd.read_csv("/root/sim/stock_strategy/stock_pool.csv", encoding='utf-8',
-                                    converters={'code': str});
-        stock_pool_list = stock_pool_pd['code'].tolist()
-        if new_code in stock_pool_list and item.get('frequence') == '5min':
+        #and item.get('frequence') == '1min'
+        if new_code in self.stock_pool_list:
             d['code'] = new_code
             d['open'] = item.get('open')
             d['high'] = item.get('high')
             d['close'] = item.get('close')
             d['low'] = item.get('low')
             d['vol'] = item.get('volume')
+            d['volume'] = item.get('volume')
             d['type'] = item.get('frequence')
             # d['amount'] = item.get('volume')
             d['date_stamp'] = QA_util_date_stamp(item.get('datetime'))
             d['time_stamp'] = QA_util_time_stamp(item.get('datetime'))
             d['date'] = item.get('datetime')[0:10]  # 2020-10-12
-            d['datetime'] = item.get('datetime')  # 2020-10-12 10:02:00
+            d['datetime'] = pd.to_datetime(item.get('datetime'))  # 2020-10-12 10:02:00
             d['tradetime'] = item.get('datetime')[0:16]  # 2020-10-12 10:02
 
         return d
@@ -170,16 +234,19 @@ class QAStrategyStockBase(QAStrategyCTABase):
         self._old_data = QA.QA_fetch_stock_min(self.code, QA.QA_util_get_last_day(
             QA.QA_util_get_real_date(str(datetime.date.today())), 5), str(datetime.datetime.now()), format='pd',
                                                frequence=self.frequence).set_index(['datetime', 'code'])
+        print(self._old_data)
+        #当天启动前行情数据
+        sim_stock_df = self.getSimStock(self.code, self.frequence)
+        self._old_data = pd.concat([self._old_data, sim_stock_df])
 
-        self._old_data = self._old_data.loc[:, [
-                                                   'open', 'high', 'low', 'close', 'volume']]
-
+        self._old_data = self._old_data.loc[:, ['open', 'high', 'low', 'close', 'volume']]
+        #print('old_data ;:::::::', self._old_data)
         self.database = pymongo.MongoClient(mongo_ip).QAREALTIME
 
         self.client = self.database.account
         self.subscriber_client = self.database.subscribe
-        self.acc = QIFI_Account(
-            username=self.strategy_id, password=self.strategy_id, trade_host=mongo_ip)
+        self.acc = QIFI_Account(username=self.strategy_id, password=self.strategy_id, trade_host=mongo_ip)
+        print(self.acc)
         self.acc.initial()
         self.pub = publisher_routing(exchange='QAORDER_ROUTER', host=self.trade_host,
                                      port=self.trade_port, user=self.trade_user, password=self.trade_password)
@@ -195,7 +262,58 @@ class QAStrategyStockBase(QAStrategyCTABase):
         # threading.Thread(target=, daemon=True).start()
         # print(self.subscribe_data)
         # self.sub.start()
+        #self.debug_callback()
         self.subscriber.start()
+
+    def debug_callback(self):
+        new_data = [{'datetime': '2021-01-27 18:05:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338', 'open': 5.24,
+             'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min', 'pctchange': 0.0}]
+        self.newbar(new_data)
+
+        # 另一个code
+        new_data = [{'datetime': '2021-01-27 18:05:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000545',
+                     'open': 5.24,
+                     'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min',
+                     'pctchange': 0.0}]
+        self.newbar(new_data)
+
+        new_data = [{'datetime': '2021-01-27 18:10:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338', 'open': 5.24,
+             'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min', 'pctchange': 0.0}]
+        self.newbar(new_data)
+
+        new_data = [{'datetime': '2021-01-27 18:10:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000545',
+                     'open': 5.24,
+                     'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min',
+                     'pctchange': 0.0}]
+        self.newbar(new_data)
+
+        new_data = [
+            {'datetime': '2021-01-27 18:15:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338', 'open': 5.24,
+             'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min', 'pctchange': 0.0}]
+        self.newbar(new_data)
+        new_data = [{'datetime': '2021-01-27 18:15:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000545',
+                     'open': 5.24,
+                     'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min',
+                     'pctchange': 0.0}]
+        self.newbar(new_data)
+
+        '''
+        new_data = [{'datetime': '2021-01-27 18:15:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338','open': 5.24,
+                    'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min', 'pctchange': 0.0}]
+        self.newbar(new_data)
+        new_data = [{'datetime': '2021-01-27 18:15:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000545',
+                     'open': 5.24,
+                     'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min',
+                     'pctchange': 0.0}]
+        self.newbar(new_data)
+
+        new_data = [{'datetime': '2021-01-27 18:20:00', 'updatetime': '2021-01-15 10:10:51', 'code': 'SZ000338',
+                     'open': 5.24,
+                     'high': 5.24, 'low': 5.24, 'close': 5.24, 'volume': 39378.0, 'frequence': '5min',
+                     'pctchange': 0.0}]
+        self.newbar(new_data)
+        '''
+
 
     def run(self):
         while True:
@@ -209,10 +327,10 @@ class QAStrategyStockBase(QAStrategyCTABase):
         self.acc = port.new_accountpro(
             account_cookie=self.strategy_id, init_cash=self.init_cash, market_type=self.market_type)
         # self.positions = self.acc.get_position(self.code)
-
+        print('data')
         data = QA.QA_quotation(self.code, self.start, self.end, source=QA.DATASOURCE.MONGO,
                                frequence=self.frequence, market=self.market_type, output=QA.OUTPUT_FORMAT.DATASTRUCT)
-        # print(data.data)
+        print(data.data)
         data.data.apply(self.x1, axis=1)
 
     def update_account(self):

@@ -1,5 +1,101 @@
 jqdatasdk not installed
 you are using non-interactive mdoel quantaxis
-2021-04-02 12:29:13.274216
-我是用户初始化。。。。['etcusdt']
-订阅远程行情开始：
+USING DEFAULT STOCK IP
+USING DEFAULT FUTURE IP
+documents must be a non-empty list
+documents must be a non-empty list
+documents must be a non-empty list
+documents must be a non-empty list
+documents must be a non-empty list
+'NoneType' object has no attribute 'columns'
+documents must be a non-empty list
+'NoneType' object has no attribute 'columns'
+documents must be a non-empty list
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+timed out
+'NoneType' object has no attribute 'columns'
+'open'
+'NoneType' object has no attribute 'columns'
+'open'
+'NoneType' object has no attribute 'columns'
+__enter__
+'NoneType' object has no attribute 'columns'
+__enter__
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'open'
+'NoneType' object has no attribute 'columns'
+'open'
+'NoneType' object has no attribute 'columns'
+__enter__
+'NoneType' object has no attribute 'columns'
+timed out
+'NoneType' object has no attribute 'columns'
+__enter__
+'NoneType' object has no attribute 'columns'
+'open'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+'NoneType' object has no attribute 'columns'
+{'消耗时间': {'real': 712.4703388214111, 'sys': 15.614529000000001, 'user': 209.956858}}
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+'NoneType' object has no attribute 'query'
+{'消耗时间': {'real': 622.1068029403687, 'sys': 14.928123, 'user': 343.2927400000001}}
